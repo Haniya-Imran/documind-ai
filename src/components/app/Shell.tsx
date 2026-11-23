@@ -5,6 +5,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Icon, Logo } from "@/components/Icon";
 import { api } from "@/lib/client/api";
 import type { Me } from "@/lib/client/types";
+import { ConfirmDialog } from "./ConfirmDialog";
+import { FloatingChat } from "./FloatingChat";
 
 const MeCtx = createContext<Me | null>(null);
 export const useMe = () => useContext(MeCtx)!;
@@ -25,6 +27,8 @@ export function Shell({ me, children }: { me: Me; children: React.ReactNode }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [scope, setScope] = useState<string | null>(null);
+  const [askLogout, setAskLogout] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   useEffect(() => { setOpen(false); setScope(new URLSearchParams(window.location.search).get("scope")); }, [path]);
 
   const isActive = (n: (typeof NAV)[number]) => {
@@ -34,6 +38,7 @@ export function Shell({ me, children }: { me: Me; children: React.ReactNode }) {
   };
 
   async function logout() {
+    setLoggingOut(true);
     try { await api("/api/auth/logout", { method: "POST" }); } catch { /* cookie is cleared either way */ }
     router.replace("/signin");
     router.refresh();
@@ -57,7 +62,7 @@ export function Shell({ me, children }: { me: Me; children: React.ReactNode }) {
           <div className="me">
             <span className="avatar" aria-hidden="true">{me.name.trim()[0]?.toUpperCase() || "U"}</span>
             <div style={{ flex: 1, minWidth: 0 }}><b>{me.name}</b><span>{me.email}</span></div>
-            <button className="item" style={{ width: "auto", padding: 8 }} onClick={logout} aria-label="Log out" title="Log out"><Icon name="logout" /></button>
+            <button className="item" style={{ width: "auto", padding: 8 }} onClick={() => setAskLogout(true)} aria-label="Log out" title="Log out"><Icon name="logout" /></button>
           </div>
         </aside>
         <div className="scrim" onClick={() => setOpen(false)} />
@@ -69,6 +74,8 @@ export function Shell({ me, children }: { me: Me; children: React.ReactNode }) {
           {children}
         </div>
       </div>
+      <FloatingChat />
+      <ConfirmDialog open={askLogout} title="Log out?" text="You'll need to sign in again to see your library, documents and chats." confirmLabel="Log out" busy={loggingOut} onConfirm={logout} onCancel={() => setAskLogout(false)} />
     </MeCtx.Provider>
   );
 }

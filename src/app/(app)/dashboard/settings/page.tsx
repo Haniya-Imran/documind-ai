@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Icon } from "@/components/Icon";
 import { useMe } from "@/components/app/Shell";
+import { ConfirmDialog } from "@/components/app/ConfirmDialog";
 import { api, ApiError } from "@/lib/client/api";
 
 export default function SettingsPage() {
@@ -14,6 +15,7 @@ export default function SettingsPage() {
   const [next, setNext] = useState("");
   const [pwMsg, setPwMsg] = useState<{ ok: boolean; t: string } | null>(null);
   const [busy, setBusy] = useState<"name" | "pw" | "out" | null>(null);
+  const [askLogout, setAskLogout] = useState(false);
 
   async function saveName(e: React.FormEvent) {
     e.preventDefault();
@@ -62,9 +64,10 @@ export default function SettingsPage() {
         <div className="card">
           <h2>Session</h2>
           <p className="hint" style={{ fontSize: 14 }}>Signing out ends this session on this device.</p>
-          <div><button className="btn btn-danger" onClick={logout} disabled={busy === "out"}><Icon name="logout" />Log out</button></div>
+          <div><button className="btn btn-danger" onClick={() => setAskLogout(true)} disabled={busy === "out"}><Icon name="logout" />Log out</button></div>
         </div>
       </div>
+      <ConfirmDialog open={askLogout} title="Log out?" text="You'll need to sign in again to see your library, documents and chats." confirmLabel="Log out" busy={busy === "out"} onConfirm={logout} onCancel={() => setAskLogout(false)} />
     </div>
   );
 }

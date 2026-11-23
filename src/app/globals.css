@@ -97,3 +97,19 @@ p { margin: 0; }
 .cite-chip:hover { background: var(--amberD); color: #fff; }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
+
+/* confirmation dialog */
+.dialog-scrim { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; background: rgba(20,15,10,.5); backdrop-filter: blur(3px); animation: fade-in .15s ease; }
+.dialog { width: 100%; max-width: 400px; padding: 26px; display: grid; gap: 10px; justify-items: start; box-shadow: 0 40px 80px -30px rgba(20,12,4,.6); animation: pop-in .2s var(--ease); }
+.dialog h2 { font-size: 22px; font-stretch: 92%; }
+.dialog p { color: var(--soft); font-size: 15px; }
+.dialog-ic { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: var(--amberL); color: var(--amberD); margin-bottom: 4px; }
+.dialog-acts { display: flex; gap: 10px; justify-content: flex-end; width: 100%; margin-top: 10px; flex-wrap: wrap; }
+@keyframes fade-in { from { opacity: 0; } }
+@keyframes pop-in { from { opacity: 0; transform: translateY(8px) scale(.97); } }
+
+/* floating new-chat button */
+.fab-chat { position: fixed; right: clamp(16px, 2.4vw, 28px); bottom: clamp(16px, 2.4vw, 28px); z-index: 45; display: inline-flex; align-items: center; gap: 10px; height: 54px; padding: 0 22px 0 18px; border-radius: 999px; background: var(--amber); color: #1E1304; font: 700 15px var(--body); text-decoration: none; box-shadow: 0 18px 36px -14px rgba(168,106,16,.85), 0 0 0 4px rgba(232,163,61,.18); transition: transform .2s var(--ease), box-shadow .2s, background .2s; }
+.fab-chat:hover { transform: translateY(-2px); background: #F0B65C; box-shadow: 0 22px 40px -14px rgba(168,106,16,.9), 0 0 0 6px rgba(232,163,61,.22); }
+.fab-chat svg { flex: none; }
+@media (max-width: 600px) { .fab-chat { height: 52px; padding: 0 18px 0 16px; } }

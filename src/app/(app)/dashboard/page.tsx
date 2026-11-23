@@ -22,7 +22,6 @@ export default function Overview() {
     <div className="page">
       <div className="page-head">
         <div><h1>{hello}, {me.name.split(" ")[0]}</h1><p>Ask a question, open a book, or upload your own PDF. Every answer comes with its page.</p></div>
-        <Link className="btn btn-amber" href="/chat?scope=library"><Icon name="chat" />New chat</Link>
       </div>
 
       <div className="grid-stats">
