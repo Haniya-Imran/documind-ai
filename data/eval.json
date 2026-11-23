@@ -1,0 +1,37 @@
+{
+  "description": "Retrieval evaluation set. Each question has the page(s) of the built-in book where the answer is stated (checked against the book text). 'unanswerable' items test refusal logic.",
+  "retrieval": [
+    { "book": "python-programming", "q": "What is a while loop?", "gold": [71] },
+    { "book": "python-programming", "q": "What happens when an if-else statement runs?", "gold": [61] },
+    { "book": "python-programming", "q": "What does floor division do?", "gold": [29] },
+    { "book": "python-programming", "q": "What is a Boolean value?", "gold": [58] },
+    { "book": "python-programming", "q": "How can a function's return value be used in an expression?", "gold": [94] },
+    { "book": "machine-learning", "q": "What is the basic idea behind k-means clustering?", "gold": [17] },
+    { "book": "machine-learning", "q": "What are weak learners in a random forest?", "gold": [49] },
+    { "book": "machine-learning", "q": "What is a confusion matrix used for?", "gold": [24] },
+    { "book": "machine-learning", "q": "When is logistic regression used for classification?", "gold": [11] },
+    { "book": "machine-learning", "q": "How is supervised learning like a student learning from an instructor?", "gold": [5] },
+    { "book": "data-science", "q": "Why is the median better than the mean when there are outliers?", "gold": [80] },
+    { "book": "data-science", "q": "Why is standard deviation more commonly used than variance?", "gold": [85] },
+    { "book": "data-science", "q": "What is an outlier?", "gold": [62] },
+    { "book": "data-science", "q": "What are the properties of the normal distribution?", "gold": [105] },
+    { "book": "data-science", "q": "What approaches are used to gather data from the internet?", "gold": [51] },
+    { "book": "business-management", "q": "What is planning in management?", "gold": [9] },
+    { "book": "business-management", "q": "What does the organizing function of management involve?", "gold": [17] },
+    { "book": "business-management", "q": "What is controlling in management?", "gold": [27] },
+    { "book": "business-management", "q": "What is span of control?", "gold": [68] },
+    { "book": "business-management", "q": "How is leading defined as a management function?", "gold": [27] },
+    { "book": "environmental-science", "q": "What does net primary productivity measure?", "gold": [21] },
+    { "book": "environmental-science", "q": "What is a food web?", "gold": [61] },
+    { "book": "environmental-science", "q": "Where is the Arctic tundra found?", "gold": [12] },
+    { "book": "environmental-science", "q": "How does global climate affect biomes?", "gold": [43] },
+    { "book": "environmental-science", "q": "Why can the same biome occur in different parts of the world?", "gold": [22] }
+  ],
+  "unanswerable": [
+    { "book": "python-programming", "q": "Who won the 2022 FIFA World Cup?" },
+    { "book": "business-management", "q": "What is the boiling point of mercury?" },
+    { "book": "environmental-science", "q": "How do I bake a chocolate cake?" },
+    { "book": "machine-learning", "q": "What is the capital city of Australia?" },
+    { "book": "data-science", "q": "What is Taylor Swift's latest album?" }
+  ]
+}

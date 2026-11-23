@@ -1,0 +1,167 @@
+[
+  {
+    "slug": "python-programming",
+    "title": "Python Programming",
+    "subtitle": "Selected chapters from OpenStax Introduction to Python Programming",
+    "topic": "Programming",
+    "authors": "Udayan Das, Aubrey Lawson, Chris Mayfield, Narges Norouzi (OpenStax)",
+    "license": "CC BY-NC-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "source_url": "https://github.com/openstax/osbooks-introduction-python-programming",
+    "book_url": "https://openstax.org/details/books/introduction-python-programming",
+    "chapters": [
+      "Statements",
+      "Expressions",
+      "Objects",
+      "Decisions",
+      "Loops",
+      "Functions"
+    ],
+    "pages": 96,
+    "file": "/books/python-programming.pdf",
+    "bytes": 2470123,
+    "toc": [
+      {
+        "title": "Statements",
+        "page": 4
+      },
+      {
+        "title": "Expressions",
+        "page": 21
+      },
+      {
+        "title": "Objects",
+        "page": 43
+      },
+      {
+        "title": "Decisions",
+        "page": 58
+      },
+      {
+        "title": "Loops",
+        "page": 71
+      },
+      {
+        "title": "Functions",
+        "page": 83
+      }
+    ]
+  },
+  {
+    "slug": "machine-learning",
+    "title": "Machine Learning",
+    "subtitle": "Machine learning and deep learning chapters from OpenStax Principles of Data Science",
+    "topic": "AI & ML",
+    "authors": "Dr. Shaun V. Ault, Dr. Soohyun Nam Liao, Larry Musolino (OpenStax)",
+    "license": "CC BY-NC-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "source_url": "https://github.com/openstax/osbooks-principles-data-science",
+    "book_url": "https://openstax.org/details/books/principles-data-science",
+    "chapters": [
+      "Decision-Making Using Machine Learning Basics",
+      "Deep Learning and AI Basics"
+    ],
+    "pages": 101,
+    "file": "/books/machine-learning.pdf",
+    "bytes": 4706004,
+    "toc": [
+      {
+        "title": "Decision-Making Using Machine Learning Basics",
+        "page": 3
+      },
+      {
+        "title": "Deep Learning and AI Basics",
+        "page": 59
+      }
+    ]
+  },
+  {
+    "slug": "data-science",
+    "title": "Data Science",
+    "subtitle": "Selected chapters from OpenStax Principles of Data Science",
+    "topic": "Data Analytics",
+    "authors": "Dr. Shaun V. Ault, Dr. Soohyun Nam Liao, Larry Musolino (OpenStax)",
+    "license": "CC BY-NC-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "source_url": "https://github.com/openstax/osbooks-principles-data-science",
+    "book_url": "https://openstax.org/details/books/principles-data-science",
+    "chapters": [
+      "What Are Data and Data Science?",
+      "Collecting and Preparing Data",
+      "Descriptive Statistics: Statistical Measurements and Probability Distributions"
+    ],
+    "pages": 111,
+    "file": "/books/data-science.pdf",
+    "bytes": 3032751,
+    "toc": [
+      {
+        "title": "What Are Data and Data Science?",
+        "page": 4
+      },
+      {
+        "title": "Collecting and Preparing Data",
+        "page": 40
+      },
+      {
+        "title": "Descriptive Statistics: Statistical Measurements and Probability Distributions",
+        "page": 75
+      }
+    ]
+  },
+  {
+    "slug": "business-management",
+    "title": "Business & Management",
+    "subtitle": "Management chapters from OpenStax Introduction to Business 2e",
+    "topic": "Business",
+    "authors": "Lawrence J. Gitman, Carl McDaniel, Amit Shah, et al. (OpenStax)",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "source_url": "https://github.com/openstax/osbooks-introduction-business",
+    "book_url": "https://openstax.org/details/books/introduction-business-2e",
+    "chapters": [
+      "Management and Leadership in Today's Organizations",
+      "Designing Organizational Structures"
+    ],
+    "pages": 91,
+    "file": "/books/business-management.pdf",
+    "bytes": 2623775,
+    "toc": [
+      {
+        "title": "Management and Leadership in Today's Organizations",
+        "page": 4
+      },
+      {
+        "title": "Designing Organizational Structures",
+        "page": 46
+      }
+    ]
+  },
+  {
+    "slug": "environmental-science",
+    "title": "Environmental Science",
+    "subtitle": "Ecology chapters (Ecology and the Biosphere, Ecosystems) from OpenStax Biology 2e",
+    "topic": "Environment",
+    "authors": "Mary Ann Clark, Matthew Douglas, Jung Choi (OpenStax)",
+    "license": "CC BY-NC-SA 4.0 (as stated in the source repository)",
+    "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "source_url": "https://github.com/openstax/osbooks-biology-bundle",
+    "book_url": "https://openstax.org/details/books/biology-2e",
+    "chapters": [
+      "Ecology and the Biosphere",
+      "Ecosystems"
+    ],
+    "pages": 90,
+    "file": "/books/environmental-science.pdf",
+    "bytes": 4273238,
+    "toc": [
+      {
+        "title": "Ecology and the Biosphere",
+        "page": 4
+      },
+      {
+        "title": "Ecosystems",
+        "page": 53
+      }
+    ]
+  }
+]
