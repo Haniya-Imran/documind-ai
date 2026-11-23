@@ -88,7 +88,7 @@ export async function processStep(doc: typeof schema.documents.$inferSelect, loa
   } catch (e) {
     if (isRateLimit(e)) {
       // temporary: keep the document in "processing" and ask the caller to wait, instead of failing it
-      log.warn("ingest.rate_limited", { doc: doc.id });
+      log.warn("ingest.rate_limited", { doc: doc.id, quota: (String((e as Error)?.message).match(/quotaId[^,]*?:\s*\\?"([A-Za-z-]+)/) || [])[1], message: String((e as Error)?.message).slice(0, 400) });
       await setDoc(doc.id, { error: null });
       return { id: doc.id, status: "processing", stage: doc.stage, progress: doc.progress, pages: doc.pages, retryAfterMs: 60_000, note: "Waiting for AI quota" };
     }
