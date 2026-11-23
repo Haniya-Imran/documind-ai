@@ -23,7 +23,7 @@ export function getProvider(): AIProvider {
   return geminiProvider(key);
 }
 
-const GEN_MODEL = () => process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const GEN_MODEL = () => process.env.GEMINI_MODEL || "gemini-3.8-flash";
 const EMBED_MODEL = () => process.env.GEMINI_EMBED_MODEL || "gemini-embedding-001";
 
 function normalise(v: number[]) {
@@ -75,7 +75,7 @@ function geminiProvider(apiKey: string): AIProvider {
       const res = await withRetry(() => ai.models.generateContent({
         model: GEN_MODEL(),
         contents: prompt,
-        config: { systemInstruction: system, responseMimeType: "application/json", temperature: 0.1 },
+        config: { systemInstruction: system, responseMimeType: "application/json" },
       }));
       return parseJsonLoose<T>(res.text ?? "");
     },
@@ -89,7 +89,7 @@ function geminiProvider(apiKey: string): AIProvider {
             { text: `Transcribe the text of pages ${fromPage} to ${toPage} of this PDF exactly as written. Do not summarise or add anything. Return JSON: {"pages":[{"page":<number>,"text":"..."}]}` },
           ],
         }],
-        config: { responseMimeType: "application/json", temperature: 0 },
+        config: { responseMimeType: "application/json" },
       }));
       const data = parseJsonLoose<{ pages: { page: number; text: string }[] }>(res.text ?? "");
       return (data.pages || []).filter((p) => p.page >= fromPage && p.page <= toPage);

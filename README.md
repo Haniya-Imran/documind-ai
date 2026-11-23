@@ -93,7 +93,7 @@ The steps and their timings are shown under every answer ("How this answer was m
 - **Backend:** Next.js route handlers on Vercel serverless (Node.js runtime), Zod validation, structured JSON logs
 - **Database:** Neon Postgres + pgvector, Drizzle ORM, SQL migrations run during the Vercel build
 - **Storage:** Vercel Blob (client uploads with short-lived tokens)
-- **AI:** Google Gemini (`gemini-2.5-flash`, `gemini-embedding-001`)
+- **AI:** Google Gemini (`gemini-3.8-flash`, `gemini-embedding-001`)
 - **Auth:** bcrypt (cost 11), signed JWT in an httpOnly cookie backed by a server-side session table, rate-limited sign-in and chat
 - **Tests:** Vitest with an in-memory Postgres (PGlite + pgvector) running the real migrations
 
