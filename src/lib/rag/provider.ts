@@ -24,6 +24,21 @@ export function getProvider(): AIProvider {
 }
 
 const GEN_MODEL = () => process.env.GEMINI_MODEL || "gemini-3.8-flash";
+/** Models tried in order when one is overloaded (503), retired (404) or out of quota (429). */
+const GEN_MODELS = () => [GEN_MODEL(), ...(process.env.GEMINI_FALLBACK_MODELS || "gemini-3.7-flash,gemini-3.6-flash").split(",")]
+  .map((m) => m.trim()).filter((m, i, a) => m && a.indexOf(m) === i);
+
+/** Runs a generation call, moving on to the next model when the current one is unavailable. */
+async function withFallback<T>(call: (model: string) => Promise<T>): Promise<T> {
+  let last: unknown;
+  for (const model of GEN_MODELS()) {
+    try { return await withRetry(() => call(model), 2); } catch (e) {
+      last = e;
+      if (!/503|UNAVAILABLE|404|NOT_FOUND|429|RESOURCE_EXHAUSTED|high demand/i.test(String((e as Error)?.message || e))) throw e;
+    }
+  }
+  throw last;
+}
 const EMBED_MODEL = () => process.env.GEMINI_EMBED_MODEL || "gemini-embedding-001";
 
 function normalise(v: number[]) {
@@ -72,16 +87,16 @@ function geminiProvider(apiKey: string): AIProvider {
       return out;
     },
     async json<T>(_task: string, system: string, prompt: string) {
-      const res = await withRetry(() => ai.models.generateContent({
-        model: GEN_MODEL(),
+      const res = await withFallback((model) => ai.models.generateContent({
+        model,
         contents: prompt,
         config: { systemInstruction: system, responseMimeType: "application/json" },
       }));
       return parseJsonLoose<T>(res.text ?? "");
     },
     async ocrPdf(pdf, fromPage, toPage) {
-      const res = await withRetry(() => ai.models.generateContent({
-        model: GEN_MODEL(),
+      const res = await withFallback((model) => ai.models.generateContent({
+        model,
         contents: [{
           role: "user",
           parts: [

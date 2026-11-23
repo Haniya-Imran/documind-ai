@@ -53,10 +53,13 @@ export async function sendMessage(userId: string, input: unknown) {
     result = await answerQuestion({ question: data.message, docs, history });
   } catch (e) {
     log.error("chat.answer_failed", { message: (e as Error)?.message });
-    const limited = /429|RESOURCE_EXHAUSTED|quota/i.test(String((e as Error)?.message));
-    result = { status: "error", answer: limited
-      ? "The AI service is busy right now (free usage limit reached). Please wait a minute and ask again."
-      : "The AI service didn't respond in time. Please try again in a moment.", citations: [], steps: [] };
+    const msg = String((e as Error)?.message);
+    const answer = /429|RESOURCE_EXHAUSTED|quota/i.test(msg)
+      ? "The AI service's free usage limit has been reached for now. Please wait a minute and ask again."
+      : /503|UNAVAILABLE|high demand/i.test(msg)
+        ? "Google's AI service is overloaded at the moment. Please try again in a minute."
+        : "The AI service didn't respond in time. Please try again in a moment.";
+    result = { status: "error", answer, citations: [], steps: [] };
   }
   const [assistant] = await db.insert(schema.messages).values({
     conversationId, role: "assistant", content: result.answer, status: result.status, citations: result.citations, steps: result.steps,
