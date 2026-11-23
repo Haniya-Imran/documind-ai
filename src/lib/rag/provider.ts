@@ -37,7 +37,8 @@ async function withRetry<T>(fn: () => Promise<T>, tries = 4): Promise<T> {
     try { return await fn(); } catch (e) {
       last = e;
       const msg = String((e as Error)?.message || e);
-      if (!/429|500|503|UNAVAILABLE|RESOURCE_EXHAUSTED|deadline|fetch failed/i.test(msg)) break;
+      // Quota errors (429) are not retried here: retrying immediately only uses up more of the quota.
+      if (/429|RESOURCE_EXHAUSTED/i.test(msg) || !/500|503|UNAVAILABLE|deadline|fetch failed/i.test(msg)) break;
       await new Promise((r) => setTimeout(r, 800 * 2 ** i));
     }
   }

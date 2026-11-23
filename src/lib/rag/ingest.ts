@@ -7,7 +7,7 @@ import { extractPages } from "./extract";
 import { rowsOf } from "./access";
 import { log } from "@/lib/log";
 
-const EMBED_BATCH = 90; // stays under the Gemini free tier (100 embeddings per minute) per call
+const EMBED_BATCH = 60; // well under the Gemini free tier (100 embeddings per minute) per call
 
 export type IngestState = { id: string; status: string; stage: string; progress: number; error?: string | null; pages: number; retryAfterMs?: number; note?: string };
 
