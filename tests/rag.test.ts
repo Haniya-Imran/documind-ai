@@ -155,6 +155,23 @@ describe("uploaded PDFs", () => {
     expect(pages[0].text).toContain("photosynthesis");
   });
 
+  it("waits instead of failing when the AI quota is exhausted", async () => {
+    const [u] = await db.insert(schema.users).values({ name: "Q", email: "q@t.co", passwordHash: "x" }).returning();
+    let [doc] = await db.insert(schema.documents).values({ ownerId: u.id, kind: "upload", title: "Quota", fileUrl: "https://x.public.blob.vercel-storage.com/uploads/q.pdf" }).returning();
+    await processStep(doc, async () => fixture("injected.pdf")); // extract (no AI)
+    [doc] = await db.select().from(schema.documents).where(eq(schema.documents.id, doc.id));
+    useFakeProvider({ ...fakeProvider(), embed: async () => { throw Object.assign(new Error('{"error":{"code":429,"status":"RESOURCE_EXHAUSTED"}}'), { status: 429 }); } });
+    const state = await processStep(doc, async () => fixture("injected.pdf"));
+    expect(state.status).toBe("processing");
+    expect(state.retryAfterMs).toBeGreaterThan(0);
+    useFakeProvider();
+    for (let i = 0; i < 5 && doc.status === "processing"; i++) {
+      await processStep(doc, async () => fixture("injected.pdf"));
+      [doc] = await db.select().from(schema.documents).where(eq(schema.documents.id, doc.id));
+    }
+    expect(doc.status).toBe("ready");
+  });
+
   it("flags prompt-injection text and refuses to answer from it", async () => {
     const [u] = await db.insert(schema.users).values({ name: "T", email: "t@t.co", passwordHash: "x" }).returning();
     let [doc] = await db.insert(schema.documents).values({ ownerId: u.id, kind: "upload", title: "Policy", fileUrl: "https://x.public.blob.vercel-storage.com/uploads/a.pdf" }).returning();

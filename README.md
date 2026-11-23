@@ -8,7 +8,7 @@ An advanced RAG (Retrieval-Augmented Generation) platform: chat with built-in bo
 
 <!-- LIVE_LINK -->
 
-![Next.js](https://img.shields.io/badge/Next.js-15-black) ![Postgres](https://img.shields.io/badge/Neon_Postgres-pgvector-336791) ![Gemini](https://img.shields.io/badge/Google-Gemini-4285F4) ![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000) ![Tests](https://img.shields.io/badge/tests-51_passing-2F7A45)
+![Next.js](https://img.shields.io/badge/Next.js-15-black) ![Postgres](https://img.shields.io/badge/Neon_Postgres-pgvector-336791) ![Gemini](https://img.shields.io/badge/Google-Gemini-4285F4) ![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000) ![Tests](https://img.shields.io/badge/tests-52_passing-2F7A45)
 
 </div>
 
@@ -115,7 +115,7 @@ The steps and their timings are shown under every answer ("How this answer was m
 ## Tests
 
 ```bash
-npm test        # 51 tests: unit, auth, API, upload validation, retrieval, citations, refusals, multi-PDF, isolation
+npm test        # 52 tests: unit, auth, API, upload validation, retrieval, citations, refusals, multi-PDF, isolation
 npm run typecheck
 ```
 

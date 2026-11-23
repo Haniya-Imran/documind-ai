@@ -11,7 +11,7 @@ import { useApi } from "@/lib/client/useApi";
 
 const MAX = 20 * 1024 * 1024;
 type Uploading = { key: string; name: string; pct: number; error?: string };
-type State = { status: string; stage: string; progress: number; error?: string | null; pages: number };
+type State = { status: string; stage: string; progress: number; error?: string | null; pages: number; retryAfterMs?: number; note?: string };
 
 const STAGE: Record<string, string> = { extract: "Reading pages", ocr: "Reading scanned pages (OCR)", embed: "Building the search index", done: "Ready" };
 
@@ -39,6 +39,12 @@ export default function DocumentsPage() {
           fails = 0;
           patch(id, { status: s.status, progress: s.progress, error: s.error ?? null, pages: s.pages, stage: s.stage });
           if (s.status === "ready" || s.status === "failed") return;
+          if (s.retryAfterMs) {
+            // the free AI quota is used up for this minute: show it and wait, then continue automatically
+            patch(id, { error: "Waiting for AI quota — continuing automatically…" });
+            await new Promise((r) => setTimeout(r, s.retryAfterMs));
+            patch(id, { error: null });
+          }
         } catch (e) {
           const err = e as ApiError;
           if (err.status === 404) return;

@@ -53,7 +53,10 @@ export async function sendMessage(userId: string, input: unknown) {
     result = await answerQuestion({ question: data.message, docs, history });
   } catch (e) {
     log.error("chat.answer_failed", { message: (e as Error)?.message });
-    result = { status: "error", answer: "The AI service didn't respond in time. Please try again in a moment.", citations: [], steps: [] };
+    const limited = /429|RESOURCE_EXHAUSTED|quota/i.test(String((e as Error)?.message));
+    result = { status: "error", answer: limited
+      ? "The AI service is busy right now (free usage limit reached). Please wait a minute and ask again."
+      : "The AI service didn't respond in time. Please try again in a moment.", citations: [], steps: [] };
   }
   const [assistant] = await db.insert(schema.messages).values({
     conversationId, role: "assistant", content: result.answer, status: result.status, citations: result.citations, steps: result.steps,

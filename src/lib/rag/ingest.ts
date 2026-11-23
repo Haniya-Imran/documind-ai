@@ -7,9 +7,15 @@ import { extractPages } from "./extract";
 import { rowsOf } from "./access";
 import { log } from "@/lib/log";
 
-const EMBED_BATCH = 96;
+const EMBED_BATCH = 90; // stays under the Gemini free tier (100 embeddings per minute) per call
 
-export type IngestState = { id: string; status: string; stage: string; progress: number; error?: string | null; pages: number };
+export type IngestState = { id: string; status: string; stage: string; progress: number; error?: string | null; pages: number; retryAfterMs?: number; note?: string };
+
+/** True when the AI provider refused because of a rate limit / quota (temporary — try again later). */
+export function isRateLimit(e: unknown) {
+  const m = String((e as Error)?.message || e);
+  return (e as { status?: number })?.status === 429 || /RESOURCE_EXHAUSTED|"code":\s*429|quota|rate.?limit/i.test(m);
+}
 
 /** Stores page texts and chunks (without embeddings yet) for a document. */
 export async function storePagesAndChunks(documentId: string, pages: PageText[]) {
@@ -69,10 +75,8 @@ export async function processStep(doc: typeof schema.documents.$inferSelect, loa
       log.info("ingest.extracted", { doc: doc.id, pages: pages.length, chunks: n, usedOcr });
       return { id: doc.id, status: "processing", stage: "embed", progress: 5, pages: pages.length };
     }
-    // embed stage — do a few batches per call
-    let result = { done: false, embedded: 0 };
-    const started = Date.now();
-    while (!result.done && Date.now() - started < 25_000) result = await embedNextBatch(doc.id);
+    // embed stage — one batch per call keeps us inside the AI provider's per-minute quota
+    const result = await embedNextBatch(doc.id);
     const { total, done } = await counts(doc.id);
     if (result.done || (total > 0 && done >= total)) {
       await setDoc(doc.id, { status: "ready", stage: "done", progress: 100 });
@@ -82,6 +86,12 @@ export async function processStep(doc: typeof schema.documents.$inferSelect, loa
     await setDoc(doc.id, { progress });
     return { id: doc.id, status: "processing", stage: "embed", progress, pages: doc.pages };
   } catch (e) {
+    if (isRateLimit(e)) {
+      // temporary: keep the document in "processing" and ask the caller to wait, instead of failing it
+      log.warn("ingest.rate_limited", { doc: doc.id });
+      await setDoc(doc.id, { error: null });
+      return { id: doc.id, status: "processing", stage: doc.stage, progress: doc.progress, pages: doc.pages, retryAfterMs: 60_000, note: "Waiting for AI quota" };
+    }
     const message = (e as { status?: number; message?: string })?.status ? (e as Error).message : "Processing failed. Please try uploading the PDF again.";
     log.error("ingest.failed", { doc: doc.id, message: (e as Error)?.message });
     await setDoc(doc.id, { status: "failed", error: message });
