@@ -50,5 +50,8 @@
     "@electric-sql/pglite": "^0.6.0"
   },
   "author": "Haniya Imran",
-  "description": "DocuMind AI — advanced RAG document intelligence platform"
+  "description": "DocuMind AI — advanced RAG document intelligence platform",
+  "engines": {
+    "node": ">=20 <23"
+  }
 }
