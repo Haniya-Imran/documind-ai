@@ -1,5 +1,5 @@
 import { and, eq, isNull } from "drizzle-orm";
-import { handler, json } from "@/lib/api";
+import { handler, json, HttpError } from "@/lib/api";
 import { requireAdmin } from "@/lib/admin";
 import { getDb, schema } from "@/lib/db/client";
 import { getProvider } from "@/lib/rag/provider";
@@ -17,6 +17,16 @@ export const GET = handler("admin.eval", async (req: Request) => {
   const db = getDb();
   const books = await db.select().from(schema.documents).where(and(eq(schema.documents.kind, "library"), isNull(schema.documents.ownerId)));
   const bySlug = new Map(books.map((b) => [b.slug, b]));
+  const params = new URL(req.url).searchParams;
+  // ?probe=<question>&book=<slug> runs one full RAG answer and returns its steps and timings
+  const probe = params.get("probe");
+  if (probe) {
+    const book = bySlug.get(params.get("book") || "python-programming");
+    if (!book) throw new HttpError(404, "Unknown book", "not_found");
+    const t = Date.now();
+    const r = await answerQuestion({ question: probe, docs: [book], history: [] });
+    return json({ ms: Date.now() - t, ...r });
+  }
   const ai = getProvider();
   type Row = { retrieved: number[]; gold: number[] };
   const rows: { hybrid: Row[]; vector: Row[]; keyword: Row[] } = { hybrid: [], vector: [], keyword: [] };
@@ -34,7 +44,7 @@ export const GET = handler("admin.eval", async (req: Request) => {
     rows.keyword.push({ retrieved: k, gold: item.gold });
     perQuestion.push({ book: item.book, q: item.q, gold: item.gold, hybridTop5: h.slice(0, 5) });
   }
-  const withRefusal = new URL(req.url).searchParams.get("refusal") === "1";
+  const withRefusal = params.get("refusal") === "1";
   const refusal: unknown[] = [];
   if (withRefusal) {
     for (const item of evalSet.unanswerable) {

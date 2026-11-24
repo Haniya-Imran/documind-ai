@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 import { EMBED_DIM } from "@/lib/db/schema";
 
 /** The AI services the RAG pipeline needs. Production uses Google Gemini. */
@@ -34,7 +34,7 @@ async function withFallback<T>(call: (model: string) => Promise<T>): Promise<T> 
   for (const model of GEN_MODELS()) {
     try { return await withRetry(() => call(model), 2); } catch (e) {
       last = e;
-      if (!/503|UNAVAILABLE|404|NOT_FOUND|429|RESOURCE_EXHAUSTED|high demand/i.test(String((e as Error)?.message || e))) throw e;
+      if (!/503|UNAVAILABLE|404|NOT_FOUND|429|RESOURCE_EXHAUSTED|high demand|abort|timeout/i.test(String((e as Error)?.message || e))) throw e;
     }
   }
   throw last;
@@ -90,7 +90,8 @@ function geminiProvider(apiKey: string): AIProvider {
       const res = await withFallback((model) => ai.models.generateContent({
         model,
         contents: prompt,
-        config: { systemInstruction: system, responseMimeType: "application/json" },
+        // low thinking keeps each step to a few seconds; a hard timeout stops a stuck call from eating the request
+        config: { systemInstruction: system, responseMimeType: "application/json", thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }, abortSignal: AbortSignal.timeout(20_000) },
       }));
       return parseJsonLoose<T>(res.text ?? "");
     },
@@ -104,7 +105,7 @@ function geminiProvider(apiKey: string): AIProvider {
             { text: `Transcribe the text of pages ${fromPage} to ${toPage} of this PDF exactly as written. Do not summarise or add anything. Return JSON: {"pages":[{"page":<number>,"text":"..."}]}` },
           ],
         }],
-        config: { responseMimeType: "application/json" },
+        config: { responseMimeType: "application/json", thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }, abortSignal: AbortSignal.timeout(45_000) },
       }));
       const data = parseJsonLoose<{ pages: { page: number; text: string }[] }>(res.text ?? "");
       return (data.pages || []).filter((p) => p.page >= fromPage && p.page <= toPage);
